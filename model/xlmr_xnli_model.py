@@ -91,3 +91,34 @@ class XLMRXLNIModel(nn.Module):
         return F.log_softmax(o, dim=1)
 
 
+
+class XLMRXNLIAdaptorModel(nn.Module):
+
+    def __init__(self, model, device, dropout_params, layers=[]):
+
+        super(XLMRXNLIAdaptorModel, self).__init__()
+
+        self.device = device
+
+        self.xlmr = model.to(device)
+        self.drop1 = nn.Dropout(p=dropout_params['xlmr_drop'])
+
+        self.fc = MLP(layers, device, dropout_params['mlp_drop'])
+
+        self.params = nn.ModuleDict({
+            'group_1': nn.ModuleList([self.xlmr]),
+            'group_2': self.fc.params['params']
+        })
+
+
+    def forward(self, x):
+        x = x.to(self.device)
+
+        o = self.xlmr(input_ids=x['input_ids'], attention_mask=x['attention_mask'])
+
+        o = o.last_hidden_state[:, 0]
+        o = self.drop1(o)
+        o = self.fc(o)
+
+        return F.log_softmax(o, dim=1)
+
