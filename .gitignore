@@ -1,0 +1,5 @@
+data/*
+experiments/*
+training_output/*
+runs/*
+.ipynb_checkpoints/

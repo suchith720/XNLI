@@ -1,0 +1,1 @@
+python prediction.py --input_file=data/test/sample_input --output_file=data/test/sample_output --model_file=experiments/LinearHead/R_014/best_014.pth.tar --info_file=experiments/LinearHead/R_014/info_014.pth.tar
